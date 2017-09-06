@@ -56,13 +56,12 @@ end
 CPU1() = CPU1(nothing)
 CPU1(r::AbstractResource) = CPU1(r.settings)
 
+
 """
     CPUThreads()
     CPUThreads(settings)
-
 Indicate that a computation should be performed using the CPU in multi-threaded mode.
 Optionally pass in an object specifying algorithmic settings.
-
 # Examples:
 ```julia
 filter(CPUThreads(), image, kernel)
@@ -74,6 +73,27 @@ immutable CPUThreads{T} <: AbstractCPU{T}
 end
 CPUThreads() = CPUThreads(nothing)
 CPUThreads(r::AbstractResource) = CPUThreads(r.settings)
+
+"""
+    CPUProcesses()
+    CPUProcesses(settings)
+
+Indicate that a computation should be performed using the CPU in multi-process mode.
+Processes should be added with addprocs() or julia started with `julia -p N`.
+Processes must communicate using distributed memory operations such as remote refrences.
+Optionally pass in an object specifying algorithmic settings.
+
+# Examples:
+```julia
+filter(CPUProcesses(), image, kernel)
+filter(CPUProcesses(TileSize(64,8)), image, kernel)
+```
+"""
+immutable CPUProcesses{T} <: AbstractCPU{T}
+    settings::T
+end
+CPUProcesses() = CPUProcesses(nothing)
+CPUProcesses(r::AbstractResource) = CPUProcesses(r.settings)
 
 """
     ArrayFireLibs()
